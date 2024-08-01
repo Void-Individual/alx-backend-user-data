@@ -6,8 +6,6 @@ import re
 
 # pattern = r'\b(' + '|'.join(fields) + r'[;]'
 def filter_datum(fields, redaction, message, separator):
-    message = message.split(separator)
-    fixed = [re.sub(log.split('=')[1], redaction, log)
-             if (log.split('=')[0] in fields)
-             else log for log in message]
-    return f'{separator}'.join(fixed)
+    pattern = r'|'.join(f'{field}=[^{separator}]+' for field in fields)
+    return re.sub(pattern, lambda m: f"{m.group().split('=')[0]}={redaction}",
+                  message)
