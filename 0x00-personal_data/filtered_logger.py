@@ -5,7 +5,6 @@ import re
 from typing import List
 import logging
 
-
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
         """
@@ -14,7 +13,7 @@ class RedactingFormatter(logging.Formatter):
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
-    def __init__(self, fields):
+    def __init__(self, fields: List[str]):
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
@@ -31,3 +30,12 @@ def filter_datum(fields: List[str], redaction: str,
     pattern = r'|'.join(f'{field}=[^{separator}]+' for field in fields)
     return re.sub(pattern, lambda m: f"{m.group().split('=')[0]}={redaction}",
                   message)
+
+#def get_logger() -> logging.Logger:
+#    pass
+
+#with open('user_data.csv', 'r') as file:
+#    user_data = file[0]
+
+#print(user_data)
+##PII_FIELDS = tuple()
