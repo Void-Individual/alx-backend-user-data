@@ -7,7 +7,7 @@ import logging
 
 
 class RedactingFormatter(logging.Formatter):
-    """ Redacting Formatter class
+    """ Redacting Formatter class to create a log of user data
         """
 
     REDACTION = "***"
