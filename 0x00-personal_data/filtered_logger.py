@@ -7,15 +7,14 @@ import logging
 
 
 class RedactingFormatter(logging.Formatter):
-    """ Redacting Formatter class to create a log of user data
-        """
+    """Redacting Formatter class to create a log of user data"""
 
     REDACTION = "***"
     FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
-        """Instantiation"""
+        """Instantiation while initializig the parent class"""
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
@@ -30,6 +29,7 @@ class RedactingFormatter(logging.Formatter):
 # pattern = r'\b(' + '|'.join(fields) + r'[;]'
 def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
+    """Method to return obfuscated log message"""
     pattern = r'|'.join(f'{field}=[^{separator}]+' for field in fields)
     return re.sub(pattern, lambda m: f"{m.group().split('=')[0]}={redaction}",
                   message)
@@ -38,11 +38,8 @@ def filter_datum(fields: List[str], redaction: str,
 # Open the file and retrieve the first line without newline
 with open('user_data.csv', 'r') as file:
     user_data = file.readline().strip()
-
-#
 PII_Data = ['name', 'email', 'phone', 'ssn', 'password']
 PII_FIELDS = tuple(data for data in user_data.split(',') if data in PII_Data)
-
 # print(PII_FIELDS)
 
 
