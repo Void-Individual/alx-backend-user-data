@@ -5,6 +5,7 @@ import re
 from typing import List
 import logging
 
+
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
         """
@@ -14,6 +15,7 @@ class RedactingFormatter(logging.Formatter):
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
+        """Instantiation"""
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
@@ -31,11 +33,34 @@ def filter_datum(fields: List[str], redaction: str,
     return re.sub(pattern, lambda m: f"{m.group().split('=')[0]}={redaction}",
                   message)
 
-#def get_logger() -> logging.Logger:
-#    pass
 
-#with open('user_data.csv', 'r') as file:
-#    user_data = file[0]
+# Open the file and retrieve the first line without newline
+with open('user_data.csv', 'r') as file:
+    user_data = file.readline().strip()
 
-#print(user_data)
-##PII_FIELDS = tuple()
+#
+PII_Data = ['name', 'email', 'phone', 'ssn', 'password']
+PII_FIELDS = tuple(data for data in user_data.split(',') if data in PII_Data)
+
+print(PII_FIELDS)
+
+
+def get_logger() -> logging.Logger:
+    """function to create a logger"""
+
+    logger = logging.Logger("user_data")
+    # Set the logging level to info
+    logger.setLevel(logging.INFO)
+    # Do not propagate messages to other loggers
+    logger.propagate = False
+    # Create a StreamHandler
+    handler = logging.StreamHandler()
+
+    # Create and set redacting formatter
+    formatter = RedactingFormatter(fields=list(PII_FIELDS))
+    handler.setFormatter(formatter)
+
+    # Add the handler to the logger
+    logger.addHandler(handler)
+
+    return logger
