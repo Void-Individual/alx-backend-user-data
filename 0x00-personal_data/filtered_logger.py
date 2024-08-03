@@ -42,7 +42,7 @@ with open('user_data.csv', 'r') as file:
 PII_Data = ['name', 'email', 'phone', 'ssn', 'password']
 PII_FIELDS = tuple(data for data in user_data.split(',') if data in PII_Data)
 
-print(PII_FIELDS)
+# print(PII_FIELDS)
 
 
 def get_logger() -> logging.Logger:
