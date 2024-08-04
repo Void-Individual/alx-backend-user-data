@@ -10,7 +10,8 @@ def hash_password(pwd: str) -> bytes:
 
     # You encode the pwd from its unicode format to bytes
     # You generate the salt, whiuch is a byte string
-    return hashpw(pwd.encode('utf-8'), gensalt())
+    hash = hashpw(pwd.encode('utf-8'), gensalt())
+    return hash
 
 
 def is_valid(hashed_password: bytes, password: str) -> bool:
@@ -18,4 +19,5 @@ def is_valid(hashed_password: bytes, password: str) -> bool:
     password and returns true or false"""
 
     # You cannot decrypt an already hashed str, you can only compare
-    return checkpw(password.encode('utf-8'), hashed_password)
+    valid = checkpw(password.encode('utf-8'), hashed_password)
+    return valid
