@@ -63,7 +63,7 @@ def get_logger() -> logging.Logger:
     # Add the handler to the logger
     logger.addHandler(handler)
 
-    return logger
+    return logging.getLogger("user_data")
 
 
 def get_db() -> connector.connection.MySQLConnection:
