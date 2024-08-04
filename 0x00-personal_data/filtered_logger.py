@@ -7,6 +7,75 @@ import logging
 import os
 from mysql import connector
 
+PII_FIELDS = ("name", "email", "phone", "ssn", "password")
+
+
+def main() -> None:
+    """Function to obtain a db connection using get_db, retrieve all the rows
+    in the users table and display each row under a filtered format"""
+
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM users;')
+
+    logger = get_logger()
+    for row in cursor:
+        x = ";".join([f"{field}={value}" for field, value
+                     in zip(cursor.column_names, row)])
+        message = f"{x};"
+
+        args = ("user_data", logging.INFO, None, None, message, None, None)
+        log_record = logging.LogRecord(*args)
+        logger.handle(log_record)
+    cursor.close()
+    db.close()
+
+
+def get_logger() -> logging.Logger:
+    """function to create a logger"""
+
+    logger = logging.Logger("user_data")
+    # Set the logging level to info
+    logger.setLevel(logging.INFO)
+    # Do not propagate messages to other loggers
+    logger.propagate = False
+    # Create a StreamHandler
+    handler = logging.StreamHandler()
+
+    # Create and set redacting formatter
+    formatter = RedactingFormatter(fields=list(PII_FIELDS))
+    handler.setFormatter(formatter)
+
+    # Add the handler to the logger
+    logger.addHandler(handler)
+
+    return logger
+
+
+def get_db() -> connector.connection.MySQLConnection:
+    """Function to return a connector to a database"""
+
+    # Use environment variables with default values
+    username = os.environ.get('PERSONAL_DATA_DB_USERNAME', 'root')
+    password = os.environ.get('PERSONAL_DATA_DB_PASSWORD', '')
+    host = os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost')
+    db_name = os.environ.get('PERSONAL_DATA_DB_NAME', 'holberton')
+
+    return connector.connect(
+        host=host,
+        user=username,
+        password=password,
+        database=db_name
+    )
+
+
+def filter_datum(fields: List[str], redaction: str,
+                 message: str, separator: str) -> str:
+    """Method to return obfuscated log message"""
+    pattern = r'|'.join(f'{field}=[^{separator}]+' for field in fields)
+    return re.sub(pattern, lambda m: f"{m.group().split('=')[0]}={redaction}",
+                  message)
+
 
 class RedactingFormatter(logging.Formatter):
     """Redacting Formatter class to create a log of user data"""
@@ -28,56 +97,5 @@ class RedactingFormatter(logging.Formatter):
         return super().format(record)
 
 
-# pattern = r'\b(' + '|'.join(fields) + r'[;]'
-def filter_datum(fields: List[str], redaction: str,
-                 message: str, separator: str) -> str:
-    """Method to return obfuscated log message"""
-    pattern = r'|'.join(f'{field}=[^{separator}]+' for field in fields)
-    return re.sub(pattern, lambda m: f"{m.group().split('=')[0]}={redaction}",
-                  message)
-
-
-# Open the file and retrieve the first line without newline
-with open('user_data.csv', 'r') as file:
-    user_data = file.readline().strip()
-PII_Data = ['name', 'email', 'phone', 'ssn', 'password']
-PII_FIELDS = tuple(data for data in user_data.split(',') if data in PII_Data)
-# print(PII_FIELDS)
-
-
-def get_logger() -> logging.Logger:
-    """function to create a logger"""
-
-    logger = logging.Logger("user_data")
-    # Set the logging level to info
-    logger.setLevel(logging.INFO)
-    # Do not propagate messages to other loggers
-    logger.propagate = False
-    # Create a StreamHandler
-    handler = logging.StreamHandler()
-
-    # Create and set redacting formatter
-    formatter = RedactingFormatter(fields=list(PII_FIELDS))
-    handler.setFormatter(formatter)
-
-    # Add the handler to the logger
-    logger.addHandler(handler)
-
-    return logging.getLogger("user_data")
-
-
-def get_db() -> connector.connection.MySQLConnection:
-    """Function to return a connector to a database"""
-
-    # Use environment variables with default values
-    username = os.environ.get('PERSONAL_DATA_DB_USERNAME', 'root')
-    password = os.environ.get('PERSONAL_DATA_DB_PASSWORD', '')
-    host = os.environ.get('PERSONAL_DATA_DB_HOST', 'localhost')
-    db_name = os.environ.get('PERSONAL_DATA_DB_NAME', 'holberton')
-
-    return connector.connect(
-        host=host,
-        user=username,
-        password=password,
-        database=db_name
-    )
+if __name__ == "__main__":
+    main()
