@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Module to encrypt a password"""
 
-from bcrypt import hashpw, gensalt, checkpw
+import bcrypt
 
 
 def hash_password(pwd: str) -> bytes:
@@ -10,7 +10,7 @@ def hash_password(pwd: str) -> bytes:
 
     # You encode the pwd from its unicode format to bytes
     # You generate the salt, whiuch is a byte string
-    hash = hashpw(pwd.encode('utf-8'), gensalt())
+    hash = bcrypt.hashpw(pwd.encode('utf-8'), bcrypt.gensalt())
     return hash
 
 
@@ -19,5 +19,5 @@ def is_valid(hashed_password: bytes, password: str) -> bool:
     password and returns true or false"""
 
     # You cannot decrypt an already hashed str, you can only compare
-    valid = checkpw(password.encode('utf-8'), hashed_password)
+    valid = bcrypt.checkpw(password.encode('utf-8'), hashed_password)
     return valid
