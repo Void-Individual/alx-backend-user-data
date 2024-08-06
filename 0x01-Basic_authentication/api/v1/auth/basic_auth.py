@@ -51,6 +51,6 @@ class BasicAuth(Auth):
             if isinstance(header, str):
                 if ':' in header:
                     email, pwd = header.split(':', maxsplit=1)
-                    return email, pwd
+                    return (email, pwd)
 
-        return None
+        return (None, None)
