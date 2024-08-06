@@ -34,7 +34,8 @@ class Auth:
             request (Optional[Request]): The Flask request object.
 
         Returns:
-            Optional[str]: The value of the Authorization header if present, otherwise None.
+            Optional[str]: The value of the Authorization header if present,
+            otherwise None.
         """
 
         if request is None:
