@@ -3,7 +3,10 @@
 
 from api.v1.auth.auth import Auth
 import base64
-from typing import Tuple
+from typing import Tuple, TypeVar
+from models.user import User
+
+T = TypeVar('T', bound='User')
 
 
 class BasicAuth(Auth):
@@ -54,3 +57,17 @@ class BasicAuth(Auth):
                     return (email, pwd)
 
         return (None, None)
+
+    def user_object_from_credentials(self, user_email: str, user_pwd:
+                                     str) -> T:
+        """Method to return the user instance based on the email and pwd"""
+
+        if user_email and isinstance(user_email, str):
+            if user_pwd and isinstance(user_pwd, str):
+                users = User.search({'email': user_email})
+                if users:
+                    for user in users:
+                        if user.is_valid_password(user_pwd) is True:
+                            return user
+
+        return None

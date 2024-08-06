@@ -128,10 +128,12 @@ class Base():
         """ Search all objects with matching attributes
         """
         s_class = cls.__name__
+        #print(attributes)
         def _search(obj):
             if len(attributes) == 0:
                 return True
             for k, v in attributes.items():
+                #print(obj, k, v)
                 if (getattr(obj, k) != v):
                     return False
             return True
