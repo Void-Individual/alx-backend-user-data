@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Module to manage API authentication"""
 
-from flask import request, Request
+from flask import request
 from typing import List, TypeVar, Optional
 from models.user import User
 
@@ -16,7 +16,7 @@ class Auth:
 
         if path is None or excluded_paths is None:
             return True
-    
+
         if path in excluded_paths:
             return False
 
@@ -27,7 +27,7 @@ class Auth:
 
         return True
 
-    def authorization_header(self, request: Optional[Request] = None) -> Optional[str]:
+    def authorization_header(self, request=None) -> Optional[str]:
         """Retrieve the Authorization header from a Flask request object.
 
         Args:
