@@ -12,7 +12,8 @@ class BasicAuth(Auth):
     def __init__(self) -> None:
         super().__init__()
 
-    def extract_base64_authorization_header(self, authorization_header: str) -> str:
+    def extract_base64_authorization_header(self, authorization_header:
+                                            str) -> str:
         """Returns the base 64 part of the authorization header for
         basic authentication purposes"""
 
@@ -24,7 +25,8 @@ class BasicAuth(Auth):
 
         return None
 
-    def decode_base64_authorization_header(self, base64_authorization_header: str) -> str:
+    def decode_base64_authorization_header(self, base64_authorization_header:
+                                           str) -> str:
         """Method to return the decoded value of a base 64 str"""
 
         header = base64_authorization_header
@@ -39,7 +41,8 @@ class BasicAuth(Auth):
 
         return None
 
-    def extract_user_credentials(self, decoded_base64_authorization_header: str) -> Tuple[str, str]:
+    def extract_user_credentials(self, decoded_base64_authorization_header:
+                                 str) -> Tuple[str, str]:
         """Method to retrieve and return user email and password from the
         base64 decoded value"""
 
