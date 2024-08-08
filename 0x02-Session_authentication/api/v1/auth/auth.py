@@ -4,6 +4,7 @@
 from flask import request
 from typing import List, TypeVar, Optional
 from models.user import User
+from os import getenv
 
 T = TypeVar('T', bound='User')
 
@@ -55,3 +56,15 @@ class Auth:
         """This will contain the flask request object"""
 
         return None
+
+    def session_cookie(self, request=None):
+        """Method to return the cookie value from a request"""
+
+        if request is None:
+            return None
+
+        cookie_name = getenv('SESSION_NAME', None)
+        if cookie_name == '_my_session_id':
+            cookie = request.cookies.get(cookie_name)
+            return cookie
+    

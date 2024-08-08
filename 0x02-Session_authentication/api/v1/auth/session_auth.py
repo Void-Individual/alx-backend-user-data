@@ -3,6 +3,7 @@
 
 import uuid
 from api.v1.auth.auth import Auth
+from models.user import User
 
 
 class SessionAuth(Auth):
@@ -32,3 +33,15 @@ class SessionAuth(Auth):
             return None
         user_id = self.user_id_by_session_id.get(session_id, None)
         return user_id
+
+    def current_user(self, request=None):
+        """An overloading method to return a user instance based on a cookie
+        value passed in the request"""
+
+        if request:
+            session_cookie = self.session_cookie(request)
+            if session_cookie:
+                user_id = self.user_id_for_session_id(session_cookie)
+                return User.get(user_id)
+
+        return None
