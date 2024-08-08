@@ -8,9 +8,10 @@ from api.v1.auth.auth import Auth
 class SessionAuth(Auth):
     """CLass containging details for authenticating a users cureent session"""
 
+    user_id_by_session_id = {}
+
     def __init__(self) -> None:
         """Instantiate any super attributes"""
-        self.user_id_by_session_id = {}
         super().__init__()
 
     def create_session(self, user_id: str = None) -> str:
