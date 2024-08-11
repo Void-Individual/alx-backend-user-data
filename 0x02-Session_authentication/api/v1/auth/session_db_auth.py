@@ -34,7 +34,10 @@ class SessionDBAuth(SessionExpAuth):
                 return user_id
 
             # If expired or not found in super, check db for session
-            sessions = UserSession.search({'session_id': session_id})
+            try:
+                sessions = UserSession.search({'session_id': session_id})
+            except KeyError:
+                return None
             for session in sessions:
                 if session.user_id is None:
                     session.remove()
