@@ -53,9 +53,7 @@ class SessionDBAuth(SessionExpAuth):
                 # Add the session duration to the created time
                 expired = created + timedelta(seconds=self.session_duration)
                 if datetime.now() > expired:
-                    print(f"Expired")
                     return None
-                print("Not expired")
                 return session.user_id
         return None
 
