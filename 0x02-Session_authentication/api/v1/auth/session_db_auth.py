@@ -4,6 +4,7 @@
 from api.v1.auth.session_exp_auth import SessionExpAuth
 from models.user_session import UserSession
 import uuid
+from datetime import datetime, timedelta
 
 
 class SessionDBAuth(SessionExpAuth):
@@ -42,6 +43,19 @@ class SessionDBAuth(SessionExpAuth):
                 if session.user_id is None:
                     session.remove()
                     return None
+
+                created = session.get('created_at')
+                user_id = session.get('user_id')
+                if self.session_duration <= 0:
+                    return session.user_id
+                if not created:
+                    return None
+                # Add the session duration to the created time
+                expired = created + timedelta(seconds=self.session_duration)
+                if datetime.now() > expired:
+                    print(f"Expired")
+                    return None
+                print("Not expired")
                 return session.user_id
         return None
 
