@@ -17,25 +17,28 @@ class SessionDBAuth(SessionExpAuth):
     def create_session(self, user_id=None):
         """This now creates and stores a new instance of UserSession"""
 
-        session_id = super().create_session(user_id)
-        session = UserSession(user_id=user_id, session_id=session_id)
-        session.save()
-        return session_id
+        if user_id:
+            session_id = super().create_session(user_id)
+            session = UserSession(user_id=user_id, session_id=session_id)
+            session.save()
+            return session_id
+        return None
 
     def user_id_for_session_id(self, session_id=None):
         """Method to return the user_id by requesting usersession
         in the db based on session_id"""
 
-        user_id = super().user_id_for_session_id(session_id)
-        if user_id is not None:
-            return user_id
+        if session_id:
+            user_id = super().user_id_for_session_id(session_id)
+            if user_id is not None:
+                return user_id
 
-        # If expired or not found in super, check db for session
-        sessions = UserSession.search({'session_id': session_id})
-        for session in sessions:
-            if session.user_id is None:
-                session.remove()
-                return session.user_id
+            # If expired or not found in super, check db for session
+            sessions = UserSession.search({'session_id': session_id})
+            for session in sessions:
+                if session.user_id is None:
+                    session.remove()
+                    return session.user_id
         return None
 
     def destroy_session(self, request=None):
