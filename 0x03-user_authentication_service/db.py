@@ -1,5 +1,5 @@
-#!/usr/bin?env python3
-"""Module containing te db class"""
+#!/usr/bin/env python3
+"""Module containing the db class"""
 
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
