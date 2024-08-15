@@ -55,16 +55,16 @@ class DB:
         found in the users table as filtered by the methods input args"""
 
         if not kwargs:
-            raise InvalidRequestError("No args were passed")
+            raise InvalidRequestError
 
         session = self._session
         try:
             resp = session.query(User).filter_by(**kwargs).one()
             return resp
         except NoResultFound:
-            raise NoResultFound("No results match")
+            raise NoResultFound
         except InvalidRequestError:
-            raise InvalidRequestError("")
+            raise InvalidRequestError
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """Method to find user, update its attribute, and return None"""
