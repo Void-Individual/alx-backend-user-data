@@ -2,9 +2,11 @@
 """Module containing the db class"""
 
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 
 # from typing import TypeVar
 from user import Base, User
@@ -47,3 +49,19 @@ class DB:
             return user
 
         return None
+
+    def find_user_by(self, **kwargs) -> None:
+        """This method takes in keyword args and returns the first row
+        found in the users table as filtered by the methods input args"""
+
+        if not kwargs:
+            raise InvalidRequestError("No args were passed")
+
+        session = self._session
+        try:
+            resp = session.query(User).filter_by(**kwargs).one()
+            return resp
+        except NoResultFound:
+            raise NoResultFound("No results match")
+        except InvalidRequestError:
+            raise InvalidRequestError("")
