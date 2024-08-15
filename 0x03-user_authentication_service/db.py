@@ -65,3 +65,16 @@ class DB:
             raise NoResultFound("No results match")
         except InvalidRequestError:
             raise InvalidRequestError("")
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Method to find user, update its attribute, and return None"""
+
+        user = self.find_user_by(id=user_id)
+        valid = user.__dict__
+        for key, value in kwargs.items():
+            if key in valid.keys():
+                setattr(user, key, value)
+            else:
+                raise ValueError
+        session = self._session
+        session.refresh(user)
