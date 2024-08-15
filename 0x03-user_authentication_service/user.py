@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Module to contain the user table"""
 
-from sqlalchemy import create_engine, Column, Integer, String, Sequence
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+# from sqlalchemy.orm import sessionmaker
 
-#engine = create_engine()
+# engine = create_engine()
 Base = declarative_base()
 
 
