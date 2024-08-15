@@ -2,15 +2,11 @@
 """Module containing the db class"""
 
 from sqlalchemy import create_engine
-# from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.session import Session
-from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError
-
-# from typing import TypeVar
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.session import Session
 from user import Base, User
-# T = TypeVar('T', bound='User')
 
 
 class DB:
@@ -38,17 +34,15 @@ class DB:
         """Method to save user to tghe database and return
         a user object"""
 
-        if email and hashed_password:
-            session = self._session
-            user = User()
-            user.email = email
-            user.hashed_password = hashed_password
-            session.add(user)
-            session.commit()
-            session.refresh(user)
-            return user
+        try:
+            new_user = User(email=email, hashed_password=hashed_password)
+            self._session.add(new_user)
+            self._session.commit()
+        except Exception:
+            self._session.rollback()
+            new_user = None
 
-        return None
+        return new_user
 
     def find_user_by(self, **kwargs) -> None:
         """This method takes in keyword args and returns the first row
@@ -70,11 +64,9 @@ class DB:
         """Method to find user, update its attribute, and return None"""
 
         user = self.find_user_by(id=user_id)
-        valid = user.__dict__
         for key, value in kwargs.items():
-            if key in valid.keys():
+            if hasattr(User, key):
                 setattr(user, key, value)
             else:
                 raise ValueError
-        session = self._session
-        session.refresh(user)
+        self._session.commit()
