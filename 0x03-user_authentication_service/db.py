@@ -44,7 +44,7 @@ class DB:
 
         return new_user
 
-    def find_user_by(self, **kwargs) -> None:
+    def find_user_by(self, **kwargs) -> User:
         """This method takes in keyword args and returns the first row
         found in the users table as filtered by the methods input args"""
 
