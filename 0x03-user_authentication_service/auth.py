@@ -7,6 +7,7 @@ from db import DB
 from user import User
 from typing import Optional
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 
 
 class Auth:
@@ -60,6 +61,16 @@ class Auth:
         except NoResultFound:
             return None
         return user
+
+    def destroy_session(self, user_id: int) -> None:
+        """Method to update corresponding user"""
+
+        try:
+            user = self._db.find_user_by(user_id=user_id)
+            self._db.update_user(user_id, session_id=None)
+        except (NoResultFound, InvalidRequestError):
+            return None
+        return None
 
 
 def _hash_password(Password: str) -> bytes:
