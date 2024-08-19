@@ -83,5 +83,27 @@ def profile():
     abort(403)
 
 
+@app.route('/reset_password', methods=['POST'], strict_slashes=False)
+def get_reset_password_token():
+    """Method to retrieve the reset token for a passed email. If the email
+    is not registered, respond with a 403, else generate a token and respond
+    with 200 with a json payload"""
+
+    try:
+        data = request.get_data().decode('utf-8').split('&')
+        args = {arg.split('=')[0]: arg.split('=')[1] for arg in data}
+    except Exception:
+        data = request.get_data().decode('utf-8')
+        args = {data.split('=')[0]: data.split('=')[1]}
+
+    email = args.get('email')
+    try:
+        token = AUTH.get_reset_password_token(email)
+        payload = {"email": email, "reset_token": token}
+        return jsonify(payload), 200
+    except ValueError:
+        abort(403)
+
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")

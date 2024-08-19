@@ -72,6 +72,32 @@ class Auth:
             return None
         return None
 
+    def get_reset_password_token(self, email: str) -> str:
+        """Method tofind the user corresponding to the email, generate
+        uuid and update the users reset_token db field then return the token,
+        else raise a valueerror exception"""
+
+        try:
+            user = self._db.find_user_by(email=email)
+            new_token = _generate_uuid()
+            self._db.update_user(user.id, reset_token=new_token)
+            return new_token
+        except NoResultFound:
+            raise ValueError
+
+    def update_password(self, reset_token: str, password: str) -> None:
+        """Use reset_token to fidn the corresponding user. If it doesn't
+        exist, raise ValueError, otherwise hash the password, change the
+        user password field and change the reset token field to None"""
+
+        try:
+            user = self._db.find_user_by(reset_token=reset_token)
+            pwd = _hash_password(password)
+            self._db.update_user(user.id, hashed_password=pwd)
+            self._db.update_user(user.id, reset_token=None)
+        except NoResultFound:
+            raise ValueError
+
 
 def _hash_password(Password: str) -> bytes:
     """Function to take in a str password and return bytes"""
