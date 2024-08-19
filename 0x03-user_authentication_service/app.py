@@ -107,11 +107,11 @@ def update_password():
     and raise a 403else, return with json payload and 200"""
 
     email = request.form.get('email')
-    token = request.form.get('reset_token')
-    pwd = request.form.get('new_password')
+    reset_token = request.form.get('reset_token')
+    new_password = request.form.get('new_password')
 
     try:
-        AUTH.update_password(token, pwd)
+        AUTH.update_password(reset_token, new_password)
         return jsonify({"email": email, "message": "Password updated"})
     except ValueError:
         abort(403)
